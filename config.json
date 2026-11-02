@@ -1,0 +1,36 @@
+{
+  "canonical": "C:\\Users\\ADMIN\\.agents\\skills",
+  "canonicalLinux": "/mnt/c/Users/ADMIN/.agents/skills",
+  "canonicalParent": "C:\\Users\\ADMIN\\.agents",
+  "lockFile": "C:\\Users\\ADMIN\\.agents\\.skill-lock.json",
+  "distro": "Ubuntu-24.04",
+  "linuxHome": "/home/aswath",
+  "linuxBinDir": "/home/aswath/.local/bin",
+  "linuxLauncher": "/home/aswath/.local/bin/skillhub",
+  "linuxHelper": "/mnt/c/Users/ADMIN/.skillhub/skillhub-linux.sh",
+  "windowsTargets": [
+    "C:\\Users\\ADMIN\\.claude\\skills",
+    "C:\\Users\\ADMIN\\.codex\\skills",
+    "C:\\Users\\ADMIN\\.cursor\\skills",
+    "C:\\Users\\ADMIN\\.copilot\\skills",
+    "C:\\Users\\ADMIN\\.config\\opencode\\skills",
+    "C:\\Users\\ADMIN\\.config\\opencode\\skill",
+    "C:\\Users\\ADMIN\\.commandcode\\skills",
+    "C:\\Users\\ADMIN\\.gemini\\antigravity-cli\\skills",
+    "C:\\Users\\ADMIN\\.gemini\\skills",
+    "C:\\Users\\ADMIN\\.hermes\\skills",
+    "C:\\Users\\ADMIN\\.hermes\\hermes-agent\\skills",
+    "C:\\Users\\ADMIN\\.codeium\\windsurf\\skills",
+    "C:\\Users\\ADMIN\\.config\\agents\\skills",
+    "C:\\Users\\ADMIN\\.minimax-code\\skills"
+  ],
+  "ubuntuTargets": [
+    "/home/aswath/.agents/skills",
+    "/home/aswath/.gemini/antigravity-cli/skills",
+    "/home/aswath/.gemini/skills",
+    "/home/aswath/.gemini/antigravity/skills",
+    "/home/aswath/.gemini/config/skills",
+    "/home/aswath/.claude/skills",
+    "/home/aswath/.codex/skills"
+  ]
+}
