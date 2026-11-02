@@ -2,7 +2,7 @@
 # skillhub-linux.sh - WSL side of skillhub.
 #
 # Runs inside the WSL distro and keeps the Ubuntu agent roots pointing at the
-# ONE canonical skill store (/mnt/c/Users/ADMIN/.agents/skills) with symlinks.
+# ONE canonical skill store with symlinks.
 #
 # Usage:  bash skillhub-linux.sh <status|repair|verify|list>
 #
@@ -15,32 +15,53 @@
 #
 # Configuration (canonical path + the ubuntu target list) is read from
 # config.json next to this script, so there is a single source of truth.
+# Placeholders %VAR% / $VAR are expanded from the environment, and ~ means $HOME.
 
 set -uo pipefail
 
-CONFIG_FILE="${SKILLHUB_CONFIG:-/mnt/c/Users/ADMIN/.skillhub/config.json}"
-DEFAULT_CANONICAL="/mnt/c/Users/ADMIN/.agents/skills"
-DEFAULT_TARGETS="/home/aswath/.agents/skills
-/home/aswath/.gemini/antigravity-cli/skills
-/home/aswath/.gemini/skills
-/home/aswath/.gemini/antigravity/skills
-/home/aswath/.gemini/config/skills
-/home/aswath/.claude/skills
-/home/aswath/.codex/skills"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_FILE="${SKILLHUB_CONFIG:-$SCRIPT_DIR/config.json}"
+DEFAULT_CANONICAL="$HOME/.agents/skills"
+DEFAULT_TARGETS="$HOME/.agents/skills
+$HOME/.gemini/antigravity-cli/skills
+$HOME/.gemini/skills
+$HOME/.gemini/antigravity/skills
+$HOME/.gemini/config/skills
+$HOME/.claude/skills
+$HOME/.codex/skills"
 
 CANONICAL=""
 TARGETS=""
+
+# expand %VAR% and ${VAR} placeholders, and a leading ~
+expand() {
+  local s="$1"
+  if command -v perl >/dev/null 2>&1; then
+    s=$(printf '%s' "$s" | perl -pe 's/%([A-Za-z_][A-Za-z0-9_]*)%/defined $ENV{$1}?$ENV{$1}:$1/ge; s/\$\{([A-Za-z_][A-Za-z0-9_]*)\}/defined $ENV{$1}?$ENV{$1}:$1/ge')
+  fi
+  case "$s" in
+    "~") s="$HOME" ;;
+    "~/"*) s="$HOME/${s#~/}" ;;
+  esac
+  printf '%s' "$s"
+}
 
 read_config() {
   CANONICAL="$DEFAULT_CANONICAL"
   TARGETS=""
   if [ -r "$CONFIG_FILE" ]; then
     c=$(sed -n 's/.*"canonicalLinux"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$CONFIG_FILE" | head -n 1)
-    if [ -n "$c" ]; then CANONICAL="$c"; fi
+    if [ -n "$c" ]; then CANONICAL="$(expand "$c")"; fi
     t=$(sed -n '/"ubuntuTargets"[[:space:]]*:[[:space:]]*\[/,/\]/p' "$CONFIG_FILE" \
           | sed '1d' | tr ',' '\n' \
           | sed -n 's/^[[:space:]]*"\([^"]*\)".*/\1/p')
-    if [ -n "$t" ]; then TARGETS="$t"; fi
+    if [ -n "$t" ]; then
+      TARGETS=""
+      while IFS= read -r line; do
+        [ -n "$line" ] || continue
+        TARGETS="$TARGETS $(expand "$line")"
+      done <<< "$t"
+    fi
   fi
   if [ -z "$TARGETS" ]; then TARGETS="$DEFAULT_TARGETS"; fi
 }

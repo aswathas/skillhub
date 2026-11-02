@@ -6,11 +6,7 @@ I spent an afternoon writing sync scripts for it. That was the wrong fix. The bu
 
 So I deleted the copies.
 
-One directory now holds every skill:
-
-    C:\Users\ADMIN\.agents\skills
-
-Every harness points at that one directory. On Windows: 14 NTFS junctions. In WSL: 7 symlinks into the same folder. 247 skills, one copy on disk, 21 pointers, zero duplicates.
+One directory now holds every skill, and every harness points at that one directory. On Windows: 14 NTFS junctions. In WSL: 7 symlinks into the same folder. 247 skills, one copy on disk, 21 pointers, zero duplicates.
 
 Then I wrote skillhub so I never have to think about it again:
 

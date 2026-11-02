@@ -3,13 +3,19 @@
 
 /*
  * skillhub - maintain ONE global skill store shared by every AI agent harness
- *             on this Windows + WSL machine.
+ *             on a Windows + WSL machine.
  *
- * Canonical store : C:\Users\ADMIN\.agents\skills        (Windows)
- *                   /mnt/c/Users/ADMIN/.agents/skills    (same dir, seen from WSL)
+ * Canonical store : <user profile>\.agents\skills              (Windows)
+ *                   /mnt/c/<user>/.agents/skills               (same dir, seen from WSL)
  *
  * Every agent root (Windows: NTFS junction, Ubuntu: symlink) points at that
  * one store, so installing a skill once makes it available to all harnesses.
+ *
+ * Paths come from config.json next to this script. Placeholders are expanded
+ * there, so the same file works on any machine:
+ *   %VAR%   -> environment variable (e.g. %USERPROFILE%)
+ *   $VAR    -> environment variable        ${VAR} -> environment variable
+ *   ~       -> your home directory
  *
  * No npm dependencies. Node built-ins only (fs, path, os, child_process).
  * Requires Node >= 16.
@@ -38,13 +44,35 @@ const LINUX_LAUNCHER_SRC = path.join(SELF_DIR, 'skillhub-linux-launcher.sh');
 /* config                                                              */
 /* ------------------------------------------------------------------ */
 
+function expandPath(p) {
+  if (p === undefined || p === null) return p;
+  let s = String(p);
+  // %VAR% (Windows style)
+  s = s.replace(/%([A-Za-z_][A-Za-z0-9_]*)%/g, (m, n) =>
+    (process.env[n] !== undefined ? process.env[n] : m));
+  // ${VAR} and $VAR (POSIX style)
+  s = s.replace(/\$\{([A-Za-z_][A-Za-z0-9_]*)\}/g, (m, n) =>
+    (process.env[n] !== undefined ? process.env[n] : m));
+  s = s.replace(/\$([A-Za-z_][A-Za-z0-9_]*)/g, (m, n) =>
+    (process.env[n] !== undefined ? process.env[n] : m));
+  // ~ -> home
+  if (s === '~') s = os.homedir();
+  else if (s.startsWith('~/') || s.startsWith('~\\')) {
+    s = path.join(os.homedir(), s.slice(2));
+  }
+  return s;
+}
+
 function loadConfig() {
   const raw = fs.readFileSync(CONFIG_FILE, 'utf8').replace(/^\uFEFF/, '');
   const c = JSON.parse(raw);
-  c.canonical = path.resolve(c.canonical);
+  c.canonical = path.resolve(expandPath(c.canonical));
   c.canonicalParent = path.dirname(c.canonical);
-  c.windowsTargets = c.windowsTargets.map((p) => path.resolve(p));
-  c.ubuntuTargets = c.ubuntuTargets.slice();
+  c.windowsTargets = (c.windowsTargets || []).map((p) => path.resolve(expandPath(p)));
+  c.ubuntuTargets = (c.ubuntuTargets || []).map((p) => expandPath(p));
+  for (const k of ['canonicalLinux', 'linuxHome', 'linuxBinDir', 'linuxLauncher', 'linuxHelper']) {
+    if (c[k]) c[k] = expandPath(c[k]);
+  }
   return c;
 }
 

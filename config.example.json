@@ -1,0 +1,36 @@
+{
+  "canonical": "%USERPROFILE%\\.agents\\skills",
+  "canonicalLinux": "/mnt/c/<windows-user>/.agents/skills",
+  "canonicalParent": "%USERPROFILE%\\.agents",
+  "lockFile": "%USERPROFILE%\\.agents\\.skill-lock.json",
+  "distro": "Ubuntu-24.04",
+  "linuxHome": "/home/<linux-user>",
+  "linuxBinDir": "/home/<linux-user>/.local/bin",
+  "linuxLauncher": "/home/<linux-user>/.local/bin/skillhub",
+  "linuxHelper": "/mnt/c/<windows-user>/.skillhub/skillhub-linux.sh",
+  "windowsTargets": [
+    "%USERPROFILE%\\.claude\\skills",
+    "%USERPROFILE%\\.codex\\skills",
+    "%USERPROFILE%\\.cursor\\skills",
+    "%USERPROFILE%\\.copilot\\skills",
+    "%USERPROFILE%\\.config\\opencode\\skills",
+    "%USERPROFILE%\\.config\\opencode\\skill",
+    "%USERPROFILE%\\.commandcode\\skills",
+    "%USERPROFILE%\\.gemini\\antigravity-cli\\skills",
+    "%USERPROFILE%\\.gemini\\skills",
+    "%USERPROFILE%\\.hermes\\skills",
+    "%USERPROFILE%\\.hermes\\hermes-agent\\skills",
+    "%USERPROFILE%\\.codeium\\windsurf\\skills",
+    "%USERPROFILE%\\.config\\agents\\skills",
+    "%USERPROFILE%\\.minimax-code\\skills"
+  ],
+  "ubuntuTargets": [
+    "/home/<linux-user>/.agents/skills",
+    "/home/<linux-user>/.gemini/antigravity-cli/skills",
+    "/home/<linux-user>/.gemini/skills",
+    "/home/<linux-user>/.gemini/antigravity/skills",
+    "/home/<linux-user>/.gemini/config/skills",
+    "/home/<linux-user>/.claude/skills",
+    "/home/<linux-user>/.codex/skills"
+  ]
+}
