@@ -1,0 +1,6 @@
+# The real, machine-specific config. Copy config.example.json to config.json and edit it.
+config.json
+
+# local state
+*.log
+node_modules/
